@@ -148,3 +148,15 @@ footer {
 footer p {
     margin: 0;
 }
+
+pre {
+    border-radius: 5px;
+    border: 1px solid #CCC;
+}
+
+p code {
+    padding: 0.1em;
+    font-family: monospace;
+    background-color: #EEE;
+    border-radius: 3px;
+}

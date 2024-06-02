@@ -90,7 +90,7 @@ done
 mv "/tmp/$BASEDIRNAME" $TMPDIR
 cp -r $STATICDIR/* $TMPDIR
 sudo cp -r $TMPDIR/* /srv/http
-
+exit 0
 #
 # upload files what it genereted to S3 bucket
 #
@@ -108,5 +108,4 @@ then
     exit 127
 fi    
 
-export BUCKET PROFILE
-$CMD_BASE/upload-s3.bash $TMPDIR
+BUCKET=$BUCKET PROFILE=$PROFILE $CMD_BASE/upload-s3.bash $TMPDIR

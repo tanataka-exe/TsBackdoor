@@ -2,11 +2,15 @@ import sys
 import os
 import json
 import markdown
+import re
 
 if len(sys.argv) < 2:
     exit(-1)
 
 filename = sys.argv[1]
+if not os.path.exists(filename):
+    exit(-1)
+
 filebasename = os.path.basename(filename)
 filedirname = os.path.dirname(filename)
 parentdirname = os.path.dirname(filedirname)
@@ -25,12 +29,17 @@ def read_file_data(filename):
         # If it is directory, read index file contained in it instead of it.
         #
         children = os.listdir(filename)
+
         for i in range(0, len(children)):
             if children[i].startswith("index."):
                 filename = filename + '/' + children[i]
 
+        if not os.path.basename(filename).startswith("index."):
+            return {}
+
     # The object that will be returned
     data = dict()
+    data['name'] = replace_filename_extension(os.path.basename(filename), 'html')
     with open(filename, 'r') as file:
         line = file.readline()
         
@@ -64,15 +73,27 @@ def read_file_data(filename):
         #
         # This is contents
         #
-        contents = [line]
+        langs = set()
+        contents = [''.join(line.splitlines())]
         for line in file:
-            contents.append(line.strip())
-    
+            line = ''.join(line.splitlines())
+
+            matches = re.match('``` *(.*)', line)
+            if matches != None and matches[1] != "":
+                langs.add(matches[1])
+            
+            contents.append(line)
+
+        if len(langs) > 0:
+            data['languages'] = list(langs)
+        
         #
         # Convert markdown text to HTML
         #
-        data['contents'] = markdown.markdown('\n'.join(contents).strip())
+        data['contents'] = '\n'.join(contents).strip()
     
+    if 'title' not in data:
+        data['title'] = data['name']
     #
     # file operation finished
     #
@@ -115,10 +136,11 @@ if index == filebasename:
     if parentdirname != "":
         upname = os.path.dirname(filedirname)
         upfiledata = read_file_data(upname)
-        links['up'] = {
-            'name': '../index.html',
-            'title': upfiledata['title'] if 'title' in upfiledata else None
-        }
+        if len(upfiledata) > 0:
+            links['up'] = {
+                'name': '../index.html',
+                'title': upfiledata['title'] if 'title' in upfiledata else None
+            }
 
     data['links'] = links
 
@@ -131,21 +153,21 @@ else:
             if i > 0:
                 prev_file = read_file_data(filedirname + '/' + filenames[i - 1])
                 filedata['prev'] = {
-                    'name': replace_filename_extension(filenames[i - 1], 'html'),
-                    'title': prev_file['title'] if 'title' in prev_file else filenames[i - 1]
+                    'name': prev_file['name'],
+                    'title': prev_file['title']
                 }
         
             if i < len(filenames) - 1:
                 next_file = read_file_data(filedirname + '/' + filenames[i + 1])
                 filedata['next'] = {
-                    'name': replace_filename_extension(filenames[i + 1], 'html'),
-                    'title': next_file['title'] if 'title' in next_file else filenames[i + 1]
+                    'name': next_file['name'],
+                    'title': next_file['title']
                 }
 
             upfiledata = read_file_data(filedirname + '/' + index)
             filedata['up'] = {
-                'name': replace_filename_extension(index, 'html'),
-                'title': upfiledata['title'] if 'title' in upfiledata else None
+                'name': upfiledata['name'],
+                'title': upfiledata['title']
             }
     
     data['links'] = filedata
