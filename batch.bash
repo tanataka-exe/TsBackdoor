@@ -1,21 +1,59 @@
 #!/bin/bash
 
+CMD_FULLPATH=`which $0`
+CMD_BASE=`dirname "$CMD_FULLPATH"`
 BASEDIR=$1
+BASEDIRNAME=`basename "$BASEDIR"`
+BASEDIRPARENT=`dirname $1`
+
 IFS='
 '
-rm -r /tmp/html
 
-CMD_BASE=/home/ta/work/else-not-implemented
-cd "$BASEDIR"
+#
+# By default, the configuration file are placed at the same directory of this script!
+# 
+CONFIG=~/.config/TsBackdoor.conf
 
-for F in `find "text" -type f`
+if [ ! -f "$CONFIG" ]
+then
+    #
+    # Create a configuration file with a default contents if it doesn't exist
+    #
+    cat > "$CONFIG" <<EOF
+static_path=$CMD_BASE/static
+tmp_path=/tmp/TsBackdoor
+EOF
+fi
+
+#
+# Static resources directory
+#
+STATICDIR=`grep static_path "$CONFIG" | cut -d '=' -f 2`
+if [ ! -d "$STATICDIR" ]
+then
+    echo "\"static\" directory doesn't exist!" >&2
+    exit -1
+fi
+
+#
+# Temporary directory
+#
+TMPDIR=`grep tmp_path "$CONFIG" | cut -d '=' -f 2`
+if [ -d "$TMPDIR" ]
+then
+    rm -r $TMPDIR
+fi
+
+cd "$BASEDIRPARENT"
+
+for F in `find "$BASEDIRNAME" -type f`
 do
     BASENAME=`basename "$F"`
-    BASEDIR=`dirname "$F"`
+    DIRPATH=`dirname "$F"`
     #
     # Change the extension of the file
     #
-    OUTFILE=/tmp/$BASEDIR/${BASENAME%.*}.html
+    OUTFILE=/tmp/$DIRPATH/${BASENAME%.*}.html
     #
     # This is a directory what is a parent of the target file
     #
@@ -33,7 +71,7 @@ do
         #
         # Parse the file and write it as a HTML file
         #
-        python "$CMD_BASE/parse-file.py" "$F" | php "$CMD_BASE/make-html.php" > "$OUTFILE"
+        python $CMD_BASE/parse-file.py "$F" | php $CMD_BASE/make-html.php > "$OUTFILE"
     else
         #
         # copy files 
@@ -42,8 +80,8 @@ do
     fi
 done
 
-mv /tmp/text /tmp/html
-cp -r static/* /tmp/html
-sudo cp -r /tmp/html/* /srv/http
+mv "/tmp/$BASEDIRNAME" $TMPDIR
+cp -r $STATICDIR/* $TMPDIR
+sudo cp -r $TMPDIR/* /srv/http
 #S3_BUCKET_NAME=test-static-site-ahalogist-01
 
