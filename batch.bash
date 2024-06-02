@@ -5,6 +5,7 @@ CMD_BASE=`dirname "$CMD_FULLPATH"`
 BASEDIR=$1
 BASEDIRNAME=`basename "$BASEDIR"`
 BASEDIRPARENT=`dirname $1`
+SITENAME=$2
 
 IFS='
 '
@@ -77,7 +78,7 @@ do
         #
         # Parse the file and write it as a HTML file
         #
-        python $CMD_BASE/parse-file.py "$F" | php $CMD_BASE/make-html.php > "$OUTFILE"
+        python $CMD_BASE/parse-file.py "$F" | php $CMD_BASE/make-html.php $SITENAME > "$OUTFILE"
     else
         #
         # copy files 
@@ -96,14 +97,14 @@ sudo cp -r $TMPDIR/* /srv/http
 BUCKET=`grep aws_s3_bucket "$CONFIG" | cut -d '=' -f 2`
 if [ ! -v BUCKET ] || [ "$BUCKET" = "" ]
 then
-    echo "aws_s3_bucket not exist or not been set in your configuration file!"
+    echo "aws_s3_bucket not exist or not been set in your configuration file!" >&2
     exit 126
 fi
 
 PROFILE=`grep aws_profile "$CONFIG" | cut -d '=' -f 2`
 if [ ! -v PROFILE ] || [ "$BUCKET" = "" ]
 then
-    echo "aws_profile not exist or not been set in your configuration file!"
+    echo "aws_profile not exist or not been set in your configuration file!" >&2
     exit 127
 fi    
 
