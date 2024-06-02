@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CMD_FULLPATH=`which $0`
+CMD_FULLPATH=`realpath $0`
 CMD_BASE=`dirname "$CMD_FULLPATH"`
 BASEDIR=$1
 BASEDIRNAME=`basename "$BASEDIR"`
@@ -24,10 +24,10 @@ static_path=$CMD_BASE/static
 tmp_path=/tmp/TsBackdoor
 
 # your bucket name goes here
-aws_s3_bucket=
+aws_s3_bucket=$BUCKET
 
 # your profile name goes here
-aws_profile=
+aws_profile=$PROFILE
 EOF
 fi
 
