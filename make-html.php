@@ -11,10 +11,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="/css/main.css" rel="stylesheet"/>
   </head>
-  <body>
+  <body class="bg-light">
 
-    <div class="container container-border">
-      <header class="row">
+    <div class="container bg-white container-border">
+      <header class="row bg-primary">
 
         <div class="col text-start">
           <?php if (array_key_exists('prev', $data['links'])): ?> 

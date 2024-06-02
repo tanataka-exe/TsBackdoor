@@ -22,6 +22,12 @@ then
     cat > "$CONFIG" <<EOF
 static_path=$CMD_BASE/static
 tmp_path=/tmp/TsBackdoor
+
+# your bucket name goes here
+aws_s3_bucket=
+
+# your profile name goes here
+aws_profile=
 EOF
 fi
 
@@ -32,7 +38,7 @@ STATICDIR=`grep static_path "$CONFIG" | cut -d '=' -f 2`
 if [ ! -d "$STATICDIR" ]
 then
     echo "\"static\" directory doesn't exist!" >&2
-    exit -1
+    exit 125
 fi
 
 #
@@ -83,5 +89,23 @@ done
 mv "/tmp/$BASEDIRNAME" $TMPDIR
 cp -r $STATICDIR/* $TMPDIR
 sudo cp -r $TMPDIR/* /srv/http
-#S3_BUCKET_NAME=test-static-site-ahalogist-01
 
+#
+# upload files what it genereted to S3 bucket
+#
+BUCKET=`grep aws_s3_bucket "$CONFIG" | cut -d '=' -f 2`
+if [ ! -v BUCKET ] || [ "$BUCKET" = "" ]
+then
+    echo "aws_s3_bucket not exist or not been set in your configuration file!"
+    exit 126
+fi
+
+PROFILE=`grep aws_profile "$CONFIG" | cut -d '=' -f 2`
+if [ ! -v PROFILE ] || [ "$BUCKET" = "" ]
+then
+    echo "aws_profile not exist or not been set in your configuration file!"
+    exit 127
+fi    
+
+export BUCKET PROFILE
+$CMD_BASE/upload-s3.bash $TMPDIR
