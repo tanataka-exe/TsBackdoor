@@ -91,7 +91,9 @@ def read_file_data(filename):
         # Convert markdown text to HTML
         #
         data['contents'] = '\n'.join(contents).strip()
-    
+
+        data['number_of_lines'] = len(contents)
+        
     if 'title' not in data:
         data['title'] = data['name']
     #
@@ -100,6 +102,33 @@ def read_file_data(filename):
     return data
 
 data = read_file_data(filename)
+
+#
+# Create breadcrumbs list
+#
+path_split = filename.split('/')
+path_split.pop()
+if filebasename.startswith("index."):
+    path_split.pop()
+    prefix = '../'
+else:
+    prefix = ''
+
+breadcrumb = []
+while len(path_split) > 0:
+    path = '/'.join(path_split)
+    i_data = read_file_data(path)
+    if 'name' in i_data:
+        breadcrumb.insert(0, {
+            'name': prefix + i_data['name'],
+            'title': i_data['title']
+        })
+    else:
+        break
+    path_split.pop()
+    prefix += '../'
+
+data['breadcrumb'] = breadcrumb
 
 #
 # if it is an index file then add file list to it.
