@@ -11,15 +11,23 @@ filename = sys.argv[1]
 if not os.path.exists(filename):
     exit(-1)
 
-filebasename = os.path.basename(filename)
-filedirname = os.path.dirname(filename)
-parentdirname = os.path.dirname(filedirname)
-
+if not os.path.isdir(filename):
+    filebasename = os.path.basename(filename)
+    filedirname = os.path.dirname(filename)
+    parentdirname = os.path.dirname(filedirname)
+else:
+    filebasename = ''
+    filedirname = filename
+    parentdirname = os.path.dirname(filedirname)
+    
 def replace_filename_extension(filename, new_extension):
     if filename.rfind('.') >= 0:
         return filename[0:filename.rfind('.')] + '.' + new_extension
     else:
         return filename
+
+def remove_extension(filename):
+    return re.sub('\\.[^.]+$', '', filename)
 
 def read_file_data(filename):
     """Open file, read it, and return metadata and markdown contents as a dict
@@ -35,7 +43,7 @@ def read_file_data(filename):
                 filename = filename + '/' + children[i]
 
         if not os.path.basename(filename).startswith("index."):
-            return {}
+            return {'title': os.path.basename(filename), 'name': os.path.basename(filename)}
 
     # The object that will be returned
     data = dict()
@@ -95,7 +103,7 @@ def read_file_data(filename):
         data['number_of_lines'] = len(contents)
         
     if 'title' not in data:
-        data['title'] = data['name']
+        data['title'] = remove_extension(data['name'])
     #
     # file operation finished
     #
@@ -134,6 +142,7 @@ data['breadcrumb'] = breadcrumb
 # if it is an index file then add file list to it.
 #
 filenames = os.listdir(filedirname)
+index = ''
 for i in range(0, len(filenames)):
     if filenames[i].startswith("index."):
         index = filenames.pop(i)
@@ -142,11 +151,13 @@ for i in range(0, len(filenames)):
 
 filenames = list(filter(lambda f: not f.endswith(".css") and not f.endswith(".png") and not f.endswith(".jpg"), filenames))
 
-if 'sort by' in index_data and index_data['sort by'] == 'desc':
-    filenames.sort(reverse=True)
-else:
-    filenames.sort()
-
+try:
+    if 'sort by' in index_data and index_data['sort by'] == 'desc':
+        filenames.sort(reverse=True)
+    else:
+        filenames.sort()
+except NameError:
+    []
 files = []
 
 if index == filebasename:

@@ -4,6 +4,8 @@
     $sitename = $argv[1];
     $stdin = fgets(STDIN);
     $data = json_decode($stdin, true);
+    $markdown = new MarkdownExtra;
+    $markdown->hard_wrap = true;
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -21,21 +23,24 @@
       <?php foreach ($data['languages'] as $lang): ?> 
         <script src="/js/highlight/<?=$lang?>.min.js"></script>
       <?php endforeach; ?>
-
-      <script>
-       $(document).ready(() => {
-           hljs.highlightAll();
-       });
-      </script>
     <?php endif; ?> 
 
+    <script>
+     $(document).ready(() => {
+         hljs.highlightAll();
+
+         if ($("main").height() < $(window).height()) {
+             document.querySelector("#bottom-nav").style.display = "none";
+         }
+     });
+    </script>
     <link href="/css/main.css" rel="stylesheet"/>
   </head>
   <body class="bg-light">
 
     <div class="container bg-white container-border">
       <header class="row bg-primary">
-        <?php if (array_key_exists('breadcrumb', $data) && count($data['breadcrumb']) > 0): ?>
+        <?php if (array_key_exists('breadcrumb', $data) && count($data['breadcrumb']) > 1): ?>
           <div class="d-flex flex-row">
 
             <div class="p-2">
@@ -44,9 +49,11 @@
 
             <div class="p-2">
               <ul class="breadcrumb" style="margin-bottom: 0">
-                <?php foreach ($data['breadcrumb'] as $item): ?>
-                  <li class="breadcrumb-item"><a href="<?=$item['name']?>"><?=$item['title']?></a></li>
-                <?php endforeach; ?>
+                <?php for ($i = 0; $i < count($data['breadcrumb']) - 1; $i++): ?>
+                  <li class="breadcrumb-item">
+                    <a href="<?=$data['breadcrumb'][$i]['name']?>"> <?=$data['breadcrumb'][$i]['title']?> </a>
+                  </li>
+                <?php endfor; ?>
               </ul>
             </div>
             
@@ -65,7 +72,7 @@
       <main>
 
         <?php if (array_key_exists('breadcrumb', $data) && count($data['breadcrumb']) > 0): ?>
-          <div class="row">
+          <nav id="top-nav" class="row">
             <div class="col text-start">
               <?php if (array_key_exists('prev', $data['links'])): ?> 
                 前: <a href="<?=$data['links']['prev']['name']?>">
@@ -91,7 +98,7 @@
 
             </div>
             <hr/>
-          </div>
+          </nav>
         <?php endif; ?>
 
         <?php if (array_key_exists('title', $data)): ?> 
@@ -104,7 +111,7 @@
 
 
         <?php if (array_key_exists('contents', $data)): ?> 
-          <?=MarkdownExtra::defaultTransform($data['contents'])?>
+          <?=$markdown->transform($data['contents'])?>
         <?php endif; ?>
         
         <?php if (array_key_exists('files', $data)): ?>
@@ -124,33 +131,31 @@
           
         <?php endif; ?>
 
-        <?php if ($data['number_of_lines'] > 100): ?>
-          <div class="row">
-            <div class="col text-start">
-              <?php if (array_key_exists('prev', $data['links'])): ?> 
-                前: <a href="<?=$data['links']['prev']['name']?>">
-                <?=$data['links']['prev']['title']?> 
-                </a>
-              <?php endif; ?> 
-            </div>
-
-            <div class="col text-center">
-              <?php if (array_key_exists('up', $data['links'])): ?> 
-                上: <a href="<?=$data['links']['up']['name']?>">
-                <?=$data['links']['up']['title']?> 
-                </a>
-              <?php endif; ?> 
-            </div>
-
-            <div class="col text-end">
-              <?php if (array_key_exists('next', $data['links'])): ?> 
-                次: <a href="<?=$data['links']['next']['name']?>">
-                <?=$data['links']['next']['title']?> 
-                </a>
-              <?php endif; ?> 
-            </div>
+        <nav id="bottom-nav" class="row">
+          <div class="col text-start">
+            <?php if (array_key_exists('prev', $data['links'])): ?> 
+              前: <a href="<?=$data['links']['prev']['name']?>">
+              <?=$data['links']['prev']['title']?> 
+              </a>
+            <?php endif; ?> 
           </div>
-        <?php endif; ?>
+
+          <div class="col text-center">
+            <?php if (array_key_exists('up', $data['links'])): ?> 
+              上: <a href="<?=$data['links']['up']['name']?>">
+              <?=$data['links']['up']['title']?> 
+              </a>
+            <?php endif; ?> 
+          </div>
+
+          <div class="col text-end">
+            <?php if (array_key_exists('next', $data['links'])): ?> 
+              次: <a href="<?=$data['links']['next']['name']?>">
+              <?=$data['links']['next']['title']?> 
+              </a>
+            <?php endif; ?> 
+          </div>
+        </nav>
 
       </main>
       

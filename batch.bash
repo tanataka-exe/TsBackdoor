@@ -5,8 +5,6 @@ CMD_BASE=`dirname "$CMD_FULLPATH"`
 BASEDIR=$1
 BASEDIRNAME=`basename "$BASEDIR"`
 BASEDIRPARENT=`dirname $1`
-SITENAME=$2
-
 IFS='
 '
 
@@ -21,8 +19,10 @@ then
     # Create a configuration file with a default contents if it doesn't exist
     #
     cat > "$CONFIG" <<EOF
+site_name=T's Backdoor
 static_path=$CMD_BASE/static
 tmp_path=/tmp/TsBackdoor
+server_basedir=/srv/http
 
 # your bucket name goes here
 aws_s3_bucket=$BUCKET
@@ -30,6 +30,16 @@ aws_s3_bucket=$BUCKET
 # your profile name goes here
 aws_profile=$PROFILE
 EOF
+fi
+
+#
+# Site name
+#
+SITENAME=`grep site_name "$CONFIG" | cut -d '=' -f 2`
+if [ "$SITENAME" = "" ]
+then
+    echo "set a \"site_name\" in configuration file" >&2
+    exit 124
 fi
 
 #
@@ -87,9 +97,15 @@ do
     fi
 done
 
-mv "/tmp/$BASEDIRNAME" $TMPDIR
+if [ "/tmp/$BASEDIRNAME" != $TMPDIR ]
+then
+    mv "/tmp/$BASEDIRNAME" $TMPDIR
+fi
 cp -r $STATICDIR/* $TMPDIR
-sudo cp -r $TMPDIR/* /srv/http
+SRVBASE=`grep server_basedir "$CONFIG" | cut -d '=' -f 2`
+sudo cp -r $TMPDIR/* $SRVBASE
+
+exit 0
 
 #
 # upload files what it genereted to S3 bucket
