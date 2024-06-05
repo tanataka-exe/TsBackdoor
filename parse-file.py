@@ -149,7 +149,7 @@ for i in range(0, len(filenames)):
         index_data = read_file_data(filedirname + '/' + index)
         break
 
-filenames = list(filter(lambda f: not f.endswith(".css") and not f.endswith(".png") and not f.endswith(".jpg"), filenames))
+filenames = list(filter(lambda f: not f.endswith(".css") and not f.endswith(".png") and not f.endswith(".jpg") and not f.endswith(".webp"), filenames))
 
 try:
     if 'sort by' in index_data and index_data['sort by'] == 'desc':
