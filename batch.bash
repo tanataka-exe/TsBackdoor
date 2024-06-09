@@ -89,6 +89,10 @@ do
         # Parse the file and write it as a HTML file
         #
         python $CMD_BASE/parse-file.py "$F" | php $CMD_BASE/make-html.php $SITENAME > "$OUTFILE"
+	if [ "$?" -ne 0 ]
+	then
+	    echo "ERROR: Some error has occured on file $F" >&2
+	fi
     else
         #
         # copy files 

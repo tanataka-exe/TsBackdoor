@@ -44,7 +44,7 @@
           <div class="d-flex flex-row">
 
             <div class="p-2">
-              <span><strong><?=$sitename?></strong></span>
+              <h1><strong><?=$sitename?></strong></h1>
             </div>
 
             <div class="p-2">
@@ -62,7 +62,7 @@
         <?php else: ?>
           <div class="d-flex flex-row">
             <div class="p-2">
-              <span class="text-center"><strong><?=$sitename?></strong></span>
+              <h1 class="text-center"><strong><?=$sitename?></strong></h1>
             </div>
           </div>
         <?php endif; ?>
@@ -101,14 +101,15 @@
           </nav>
         <?php endif; ?>
 
-        <?php if (array_key_exists('title', $data)): ?> 
-          <h1><?=$data['title']?></h1>
-        <?php endif; ?>
-
-        <?php if (array_key_exists('date', $data)): ?> 
-          <p><?=$data['date']?></p>
-        <?php endif; ?>
-
+        <div class="article-header"> 
+          <?php if (array_key_exists('title', $data)): ?> 
+            <h1><?=$data['title']?></h1>
+          <?php endif; ?> 
+  
+          <?php if (array_key_exists('date', $data)): ?> 
+  	    <p class="date"><?=$data['date']?></p>
+          <?php endif; ?> 
+        </div>
 
         <?php if (array_key_exists('contents', $data)): ?> 
           <?=$markdown->transform($data['contents'])?>

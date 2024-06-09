@@ -5,6 +5,7 @@ import os
 import json
 import markdown
 import re
+import traceback
 
 if len(sys.argv) < 2:
     exit(-1)
@@ -111,8 +112,7 @@ def read_file_data(filename, require_contents = True):
     
             data['number_of_lines'] = len(contents)
 
-    except Exception as err:
-        count = sys.stderr.write(str(err) + "\n")
+    except Exception: 
         exit(-1)
         
     #
@@ -161,7 +161,7 @@ for i in range(0, len(filenames)):
         break
 
 def check_file_extension(filename):
-    for extension in ['.gif', '.jpeg', '.jpg', '.JPG', '.mp4', '.pdf', '.png', '.webp', '.PNG']:
+    for extension in ['.gif', '.jpeg', '.jpg', '.JPG', '.mp4', '.pdf', '.png', '.webp', '.PNG', '.txt', '.org']:
         if filename.endswith(extension):
             return False
     return True
@@ -193,6 +193,7 @@ if os.path.isdir(filename) or index == filebasename:
     if parentdirname != "":
         upfilenames = os.listdir(parentdirname)
         upfilenames = list(filter(lambda n: not n.startswith("index."), upfilenames))
+        upfilenames = list(filter(lambda f: check_file_extension(f), upfilenames))
         upfilenames.sort()
         
         for i in range(0, len(upfilenames)):
