@@ -107,6 +107,7 @@ then
 fi
 cp -r $STATICDIR/* $TMPDIR
 SRVBASE=`grep server_basedir "$CONFIG" | cut -d '=' -f 2`
+sudo rm -r $SRVBASE/*
 sudo cp -r $TMPDIR/* $SRVBASE
 
 exit 0
