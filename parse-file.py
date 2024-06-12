@@ -181,10 +181,9 @@ if os.path.isdir(filename) or index == filebasename:
 
     for i in range(0, len(filenames)):
         filedata = read_file_data(filedirname + '/' + filenames[i], False)
-        files.append({
-            'name': replace_filename_extension(filenames[i], 'html'),
-            'title': filedata['title'] if 'title' in filedata else filenames[i]
-        })
+        filedata['name'] = replace_filename_extension(filenames[i], 'html')
+        filedata['title'] = filedata['title'] if 'title' in filedata else filenames[i]
+        files.append(filedata)
 
     data['files'] = files
 
@@ -202,14 +201,14 @@ if os.path.isdir(filename) or index == filebasename:
                 if i > 0:
                     prev_file = read_file_data(parentdirname + '/' + upfilenames[i - 1], False)
                     links['prev'] = {
-                        'name': '../' + upfilenames[i - 1],
+                        'name': '../' + replace_filename_extension(upfilenames[i - 1], 'html'),
                         'title': prev_file['title']
                     }
             
                 if i < len(upfilenames) - 1:
                     next_file = read_file_data(parentdirname + '/' + upfilenames[i + 1], False)
                     links['next'] = {
-                        'name': '../' + upfilenames[i + 1],
+                        'name': '../' + replace_filename_extension(upfilenames[i + 1], 'html'),
                         'title': next_file['title']
                     }
     
@@ -230,20 +229,20 @@ else:
             if i > 0:
                 prev_file = read_file_data(filedirname + '/' + filenames[i - 1], False)
                 filedata['prev'] = {
-                    'name': prev_file['name'],
+                    'name': replace_filename_extension(filenames[i - 1], 'html'),
                     'title': prev_file['title']
                 }
         
             if i < len(filenames) - 1:
                 next_file = read_file_data(filedirname + '/' + filenames[i + 1], False)
                 filedata['next'] = {
-                    'name': next_file['name'],
+                    'name': replace_filename_extension(filenames[i + 1], 'html'),
                     'title': next_file['title']
                 }
 
             upfiledata = read_file_data(filedirname + '/' + index, False)
             filedata['up'] = {
-                'name': upfiledata['name'],
+                'name': replace_filename_extension(upfiledata['name'], 'html'),
                 'title': upfiledata['title']
             }
     

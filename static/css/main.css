@@ -110,7 +110,7 @@ header {
 }
 
 header h1 {
-    font-size: 1.5em;
+    font-size: 1.0em;
 }
 
 main {
@@ -183,3 +183,24 @@ img {
     color: #999;
 }
 
+img.mw800 {
+    max-width: 800px;
+}
+
+img.mw600 {
+    max-width: 600px;
+}
+
+img.mw400 {
+    max-width: 400px;
+}
+
+img.mw200 {
+    max-width: 200px;
+}
+
+#bottom-nav {
+    margin-top: 3em;
+    padding-top: 1em;
+    border-top: 1px solid #CCC;
+}

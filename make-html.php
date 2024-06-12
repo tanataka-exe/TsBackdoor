@@ -101,6 +101,10 @@
           </nav>
         <?php endif; ?>
 
+        <?php if (array_key_exists('eyecatch', $data)): ?>
+          <img src="<?=$data['eyecatch']?>" style="margin-bottom: 1em;" />
+        <?php endif; ?>
+
         <div class="article-header"> 
           <?php if (array_key_exists('title', $data)): ?> 
             <h1><?=$data['title']?></h1>
@@ -117,18 +121,30 @@
         
         <?php if (array_key_exists('files', $data)): ?>
           
-          <ol>
+          <table class="table table-borderless table-hover"> 
 
-            <?php foreach ($data['files'] as $filename): ?> 
-              <li>
-                <a href="<?=$filename['name']?>"><?=$filename['title']?></a>
-                <?php if (array_key_exists('excerpt', $filename)): ?>
-                  <p><?=$filename['excerpt']?></p>
-                <?php endif; ?> 
-              </li>
+            <?php foreach ($data['files'] as $i=>$filedata): ?> 
+              <tr>
+                <th scope="row text-end" width="40px"><?=$i+1?></th>
+                <td>
+                  <a href="<?=$filedata['name']?>"><?=$filedata['title']?></a>
+                </td>
+                <td>
+                  <?php if (array_key_exists('excerpt', $filedata)): ?>
+                    <p><?=$filedata['excerpt']?></p>
+                  <?php endif; ?> 
+                </td>
+                <?php if (array_key_exists('display_dates', $data)
+                          && strtolower($data['display_dates']) != 'no'
+                          && array_key_exists('date', $filedata)): ?>
+                  <td class="text-end">
+                    <span class="date"><?=$filedata['date']?></span>
+                  </td>
+                <?php endif; ?>
+              </tr>
             <?php endforeach; ?>
 
-          </ol>
+          </table>
           
         <?php endif; ?>
 
