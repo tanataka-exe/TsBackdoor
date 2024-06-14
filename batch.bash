@@ -101,6 +101,8 @@ do
     fi
 done
 
+python $CMD_BASE/get-rss-seed.py "$BASEDIR" | php $CMD_BASE/make-rss.php "$SITENAME" "http://$BUCKET.s3-website.ap-northeast-1.amazonaws.com" > /tmp/$BASEDIRNAME/news.rdf
+
 if [ "/tmp/$BASEDIRNAME" != $TMPDIR ]
 then
     mv "/tmp/$BASEDIRNAME" $TMPDIR
