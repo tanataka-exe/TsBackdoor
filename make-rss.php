@@ -15,7 +15,7 @@
       <?php foreach ($data as $file): ?> 
         <item rdf:about="<?=$siteurl?><?=$file['path']?>">
           <title><?=$file['title']?></title>
-          <link><?=$siteurl?><?=$file['path']?></link>
+          <link><?=$siteurl?><?=urlencode($file['path'])?></link>
           <?php if (array_key_exists('excerpt', $file)): ?> 
             <description><?=$file['excerpt']?></description>
           <?php endif; ?> 

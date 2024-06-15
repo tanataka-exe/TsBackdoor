@@ -12,10 +12,23 @@ def date_to_iso(date_str):
     date_parts = date_str.split('/')
     return str(datetime.date(int(date_parts[0]), int(date_parts[1]), int(date_parts[2])))
 
+def get_subject(filepath):
+    basepath = path
+    result = []
+    parts = filepath.replace(basepath, '').split('/')
+    parts.pop(0)
+    parts.pop()
+    for i in parts:
+        basepath = basepath + '/' + i
+        info = read_file_data(basepath, False)
+        result.append(info['title'])
+    return ' / '.join(result)
+
 for filepath in glob.iglob(path + "/**/*.md", recursive=True):
     try:
         filedata = read_file_data(filepath, False)
         filedata['path'] = filepath.replace(path, '')
+        filedata['subject'] = get_subject(filepath)
         if 'date' in filedata:
             filedata['date_iso'] = date_to_iso(filedata['date'])
         filelist.append(filedata)
