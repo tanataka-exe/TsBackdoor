@@ -3,7 +3,7 @@ import os
 import glob
 import json
 import datetime
-from common_functions import read_file_data
+from common_functions import read_file_data, replace_filename_extension
 
 path = sys.argv[1]
 filelist = []
@@ -27,7 +27,7 @@ def get_subject(filepath):
 for filepath in glob.iglob(path + "/**/*.md", recursive=True):
     try:
         filedata = read_file_data(filepath, False)
-        filedata['path'] = filepath.replace(path, '')
+        filedata['path'] = replace_filename_extension(filepath.replace(path, ''), 'html')
         filedata['subject'] = get_subject(filepath)
         if 'date' in filedata:
             filedata['date_iso'] = date_to_iso(filedata['date'])

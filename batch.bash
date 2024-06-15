@@ -101,7 +101,13 @@ do
     fi
 done
 
-python $CMD_BASE/get-rss-seed.py "$BASEDIR" | php $CMD_BASE/make-rss.php "$SITENAME" "http://$BUCKET.s3-website.ap-northeast-1.amazonaws.com" > /tmp/$BASEDIRNAME/news.rdf
+if [ -v IS_LOCAL ]
+then
+    SITEURL=http://localhost
+else
+    SITEURL=http://$BUCKET.s3-website.ap-northeast-1.amazonaws.com
+fi
+python $CMD_BASE/get-rss-seed.py "$BASEDIR" | php $CMD_BASE/make-rss.php "$SITENAME" "$SITEURL" > /tmp/$BASEDIRNAME/rss.xml
 
 if [ "/tmp/$BASEDIRNAME" != $TMPDIR ]
 then

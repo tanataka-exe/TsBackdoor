@@ -4,30 +4,34 @@
     $data = json_decode($stdin, true);
     $siteurl = $argv[2];
     $publisher = "Tanaka Takayuki";
+    date_default_timezone_set("Asia/Tokyo");
 ?>
 <?xml version="1.0" encoding="UTF-8"?>
-<rdf:RDF xmlns="http://purl.org/rss/1.0/"  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/"  xml:lang="ja">
-  <channel rdf:about="<?=$siteurl?>/news.rdf">
+<rss version="2.0">
+  <channel>
     <title><?=$sitename?> RSS</title>
     <link><?=$siteurl?></link>
     <description>T's Backdoor 最新記事</description>
-    <items>
-      <?php foreach ($data as $file): ?> 
-        <item rdf:about="<?=$siteurl?><?=$file['path']?>">
-          <title><?=$file['title']?></title>
-          <link><?=$siteurl?><?=urlencode($file['path'])?></link>
-          <?php if (array_key_exists('excerpt', $file)): ?> 
-            <description><?=$file['excerpt']?></description>
-          <?php endif; ?> 
-          <?php if (array_key_exists('date_iso', $file)): ?> 
-            <dc:date><?=$file['date_iso']?></dc:date>
-          <?php endif; ?> 
-          <?php if (array_key_exists('subject', $file)): ?> 
-            <dc:subject><?=$file['subject']?></dc:subject>
-          <?php endif; ?> 
-          <dc:publisher><?=$publisher?></dc:publisher>
-        </item>
-      <?php endforeach; ?>
-    </items>
+    <category>diary</category>
+    <copyright>2024 田中 喬之</copyright>
+    <language>ja_JP</language>
+    <?php foreach ($data as $file): ?> 
+      <item>
+        <title><?=$file['title']?></title>
+        <link><?=$siteurl?><?=str_replace('%2F', '/', urlencode($file['path']))?></link>
+        <?php if (array_key_exists('excerpt', $file)): ?> 
+          <description><?=$file['excerpt']?></description>
+        <?php else: ?>
+          <description></description>
+        <?php endif; ?> 
+        <?php if (array_key_exists('date_iso', $file)): ?> 
+          <pubDate><?=date('r', strtotime($file['date_iso']))?></pubDate>
+        <?php endif; ?> 
+        <?php if (array_key_exists('subject', $file)): ?> 
+          <category><?=$file['subject']?></category>
+        <?php endif; ?> 
+        <publisher><?=$publisher?></publisher>
+      </item>
+    <?php endforeach; ?>
   </channel>
-</rdf:RDF>
+</rss>

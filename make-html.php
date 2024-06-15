@@ -40,14 +40,14 @@
 
     <div class="container bg-white container-border">
       <header class="row bg-primary">
-        <?php if (array_key_exists('breadcrumb', $data) && count($data['breadcrumb']) > 1): ?>
-          <div class="d-flex flex-row">
+        <div class="d-flex">
+          <?php if (array_key_exists('breadcrumb', $data) && count($data['breadcrumb']) > 1): ?>
 
             <div class="p-2">
               <h1><strong><?=$sitename?></strong></h1>
             </div>
 
-            <div class="p-2">
+            <div class="p-2 flex-grow-1">
               <ul class="breadcrumb" style="margin-bottom: 0">
                 <?php for ($i = 0; $i < count($data['breadcrumb']) - 1; $i++): ?>
                   <li class="breadcrumb-item">
@@ -57,16 +57,19 @@
               </ul>
             </div>
             
-          </div>
-
-        <?php else: ?>
-          <div class="d-flex flex-row">
-            <div class="p-2">
-              <h1 class="text-center"><strong><?=$sitename?></strong></h1>
+          <?php else: ?>
+            <div class="p-2 flex-grow-1">
+              <h1><strong><?=$sitename?></strong></h1>
             </div>
-          </div>
-        <?php endif; ?>
+          <?php endif; ?>
 
+          <div class="p-2">
+            <a href="/rss.xml">RSS</a>
+          </div>
+          <div class="p-2">
+            <a href="https://x.com/ahalogist_t">&#x1D54F;</a>
+          </div>
+        </div>
       </header>
 
       <main>
