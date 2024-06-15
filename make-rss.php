@@ -19,6 +19,7 @@
       <item>
         <title><?=$file['title']?></title>
         <link><?=$siteurl?><?=str_replace('%2F', '/', urlencode($file['path']))?></link>
+        <guid><?=str_replace('%2F', '/', urlencode($file['path']))?></guid>
         <?php if (array_key_exists('excerpt', $file)): ?> 
           <description><?=$file['excerpt']?></description>
         <?php else: ?>

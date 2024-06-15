@@ -112,7 +112,7 @@
           <?php if (array_key_exists('title', $data)): ?> 
             <h1><?=$data['title']?></h1>
           <?php endif; ?> 
-  
+
           <?php if (array_key_exists('date', $data)): ?> 
   	    <p class="date"><?=$data['date']?></p>
           <?php endif; ?> 
