@@ -9,6 +9,10 @@ body {
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-position: center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
     padding: 20px;
     margin: 0;
 }
@@ -107,10 +111,12 @@ header {
     padding: 1em 2em 1em 2em;
     border-radius: 5px 5px 0px 0px;
     color: #ddd;
+    background-color: midnightblue;
 }
 
 header h1 {
     font-size: 1.0em;
+    margin-bottom: 0;
 }
 
 main {
@@ -131,7 +137,7 @@ main h2 {
 
 main h3 {
     font-size: 1.2em;
-    font-weight: normal;
+    font-weight: bold;
     margin: 1em 0 1em 0;
 }
 

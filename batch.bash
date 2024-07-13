@@ -113,7 +113,7 @@ if [ "/tmp/$BASEDIRNAME" != $TMPDIR ]
 then
     mv "/tmp/$BASEDIRNAME" $TMPDIR
 fi
-cp -r $STATICDIR/* $TMPDIR
+cp -rp $STATICDIR/* $TMPDIR
 SRVBASE=`grep server_basedir "$CONFIG" | cut -d '=' -f 2`
 sudo rm -r $SRVBASE/*
 sudo cp -r $TMPDIR/* $SRVBASE

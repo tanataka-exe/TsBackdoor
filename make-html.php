@@ -39,7 +39,7 @@
   <body class="bg-light">
 
     <div class="container bg-white container-border">
-      <header class="row bg-primary">
+      <header class="row">
         <div class="d-flex">
           <?php if (array_key_exists('breadcrumb', $data) && count($data['breadcrumb']) > 1): ?>
 
@@ -180,7 +180,7 @@
       </main>
       
       <footer class="row text-center">
-        <p>(C)2024</p>
+        <p>&copy;2024 田中 喬之 (Tanaka Takayuki)</p>
       </footer>
 
     </div>
