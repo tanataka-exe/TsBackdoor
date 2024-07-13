@@ -63,6 +63,16 @@ fi
 
 cd "$BASEDIRPARENT"
 
+#
+# upload files what it genereted to S3 bucket
+#
+BUCKET=`grep aws_s3_bucket "$CONFIG" | cut -d '=' -f 2`
+if [ ! -v BUCKET ] || [ "$BUCKET" = "" ]
+then
+    echo "aws_s3_bucket not exist or not been set in your configuration file!" >&2
+    exit 126
+fi
+
 for F in `find "$BASEDIRNAME" -type f`
 do
     BASENAME=`basename "$F"`
@@ -119,16 +129,6 @@ sudo rm -r $SRVBASE/*
 sudo cp -r $TMPDIR/* $SRVBASE
 
 exit 0
-
-#
-# upload files what it genereted to S3 bucket
-#
-BUCKET=`grep aws_s3_bucket "$CONFIG" | cut -d '=' -f 2`
-if [ ! -v BUCKET ] || [ "$BUCKET" = "" ]
-then
-    echo "aws_s3_bucket not exist or not been set in your configuration file!" >&2
-    exit 126
-fi
 
 PROFILE=`grep aws_profile "$CONFIG" | cut -d '=' -f 2`
 if [ ! -v PROFILE ] || [ "$BUCKET" = "" ]

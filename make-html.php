@@ -6,6 +6,7 @@
     $data = json_decode($stdin, true);
     $markdown = new MarkdownExtra;
     $markdown->hard_wrap = true;
+    $isTop = count($data['links']) == 0;
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -18,6 +19,9 @@
     <link rel="stylesheet" type="text/css" href="/css/highlight-ex.css"/>
     <script src="/js/highlight.min.js"></script>
     <script src="/js/jquery-3.7.1.min.js"></script>
+    <?php if ($isTop): ?>
+      <script src="/js/recent-articles.js"></script>
+    <?php endif; ?>
 
     <?php if (array_key_exists('languages', $data)): ?> 
       <?php foreach ($data['languages'] as $lang): ?> 
@@ -123,32 +127,53 @@
         <?php endif; ?>
         
         <?php if (array_key_exists('files', $data)): ?>
-          
-          <table class="table table-borderless table-hover"> 
 
-            <?php foreach ($data['files'] as $i=>$filedata): ?> 
-              <tr>
-                <th scope="row text-end" width="40px"><?=$i+1?></th>
-                <td>
+          <?php if ($isTop): ?>
+            <h2>分類</h2>
+
+            <ul class="d-flex flex-row flex-wrap btn-group">
+              <?php foreach ($data['files'] as $i=>$filedata): ?> 
+                <li class="d-flex btn btn-outline-info btn-lg justify-content-around">
                   <a href="<?=$filedata['name']?>"><?=$filedata['title']?></a>
-                </td>
-                <td>
-                  <?php if (array_key_exists('excerpt', $filedata)): ?>
-                    <p><?=$filedata['excerpt']?></p>
-                  <?php endif; ?> 
-                </td>
-                <?php if (array_key_exists('display_dates', $data)
-                          && strtolower($data['display_dates']) != 'no'
-                          && array_key_exists('date', $filedata)): ?>
-                  <td class="text-end">
-                    <span class="date"><?=$filedata['date']?></span>
-                  </td>
-                <?php endif; ?>
-              </tr>
-            <?php endforeach; ?>
+                </li>
+              <?php endforeach; ?>
+            </ul>
 
+          <?php else: ?>
+            
+            <table class="table table-borderless table-hover"> 
+
+              <?php foreach ($data['files'] as $i=>$filedata): ?> 
+                <tr>
+                  <th scope="row" class="text-end" width="40px"><?=$i+1?></th>
+                  <td>
+                    <a href="<?=$filedata['name']?>"><?=$filedata['title']?></a>
+                  </td>
+                  <td>
+                    <?php if (array_key_exists('excerpt', $filedata)): ?>
+                      <p><?=$filedata['excerpt']?></p>
+                    <?php endif; ?> 
+                  </td>
+                  <?php if (array_key_exists('display_dates', $data)
+                            && strtolower($data['display_dates']) != 'no'
+                            && array_key_exists('date', $filedata)): ?>
+                    <td class="text-end">
+                      <span class="date"><?=$filedata['date']?></span>
+                    </td>
+                  <?php endif; ?>
+                </tr>
+              <?php endforeach; ?>
+
+            </table>
+
+          <?php endif; ?>
+        <?php endif; ?>
+
+        <?php if ($isTop): ?>
+          <h2>最近書いたページ</h2>
+          <table id="recent-articles" class="table table-borderless table-hover">
+            <tbody></tbody>
           </table>
-          
         <?php endif; ?>
 
         <nav id="bottom-nav" class="row">
