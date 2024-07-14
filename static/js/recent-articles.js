@@ -8,6 +8,7 @@ async function readRss() {
         const item = items[i];
         const title = item.getElementsByTagName('title')[0].innerHTML;
         const link = item.getElementsByTagName('link')[0].innerHTML;
+        const category = item.getElementsByTagName('category')[0].innerHTML;
         const pubDate = item.getElementsByTagName('pubDate')[0].innerHTML;
         const date = new Date(pubDate);
         const year = date.getFullYear();
@@ -17,8 +18,9 @@ async function readRss() {
         $('#recent-articles').find('tbody').append(`
             <tr>
               <th scope="row" class="text-end" width="40px">${i + 1}</th>
-              <td><a href="${link}">${title}</td>
-              <td><span class="date">${dateFormat}</span></td>
+              <td><a href="${link}">${title}</a></td>
+              <td class="text-end"><a href="${link}"><span class="recent-article-category">(${category})</span></a></td>
+              <td class="text-end"><span class="date">${dateFormat}</span></td>
             </tr>
         `);
     }
