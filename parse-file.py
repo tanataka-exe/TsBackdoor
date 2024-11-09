@@ -65,7 +65,7 @@ for i in range(0, len(filenames)):
         break
 
 def check_file_extension(filename):
-    for extension in ['.gif', '.jpeg', '.jpg', '.JPG', '.mp4', '.pdf', '.png', '.webp', '.PNG', '.txt', '.org']:
+    for extension in ['.gif', '.jpeg', '.jpg', '.JPG', '.mp4', '.pdf', '.png', '.webp', '.PNG', '.txt', '.org', '.git']:
         if filename.endswith(extension):
             return False
     return True

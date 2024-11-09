@@ -17,6 +17,15 @@ CONFIG=~/.config/${APP_NAME}.conf
 
 if [ ! -f "$CONFIG" ]
 then
+    if [ ! -v BUCKET ];
+    then
+        echo "Please set the environment variable named BUCKET."
+    fi
+    if [ ! -v PROFILE ]
+    then
+        echo "Please set the environment variable named PROFILE."
+    fi
+
     #
     # Create a configuration file with a default contents if it doesn't exist
     #
@@ -28,6 +37,7 @@ server_basedir=/srv/http
 
 # your bucket name goes here
 aws_s3_bucket=${BUCKET}
+site_url=http://${BUCKET}.s3-website.ap-northeast-1.amazonaws.com
 
 # your profile name goes here
 aws_profile=${PROFILE}
@@ -75,7 +85,17 @@ then
     exit 126
 fi
 
-for F in `find "$BASEDIRNAME" -type f`
+#
+# Site URL
+#
+SITEURL=`grep site_url "$CONFIG" | cut -d '=' -f 2`
+if [ "$SITEURL" = "" ]
+then
+    echo "set a \"site_url\" in configuration file" >&2
+    exit 124
+fi
+
+for F in `find "$BASEDIRNAME" -type f -not -path "$BASEDIRNAME/.git/*"`
 do
     BASENAME=`basename "$F"`
     DIRPATH=`dirname "$F"`
@@ -113,12 +133,6 @@ do
     fi
 done
 
-if [ -v IS_LOCAL ]
-then
-    SITEURL=http://localhost
-else
-    SITEURL=http://$BUCKET.s3-website.ap-northeast-1.amazonaws.com
-fi
 python $CMD_BASE/get-rss-seed.py "$BASEDIR" | php $CMD_BASE/make-rss.php "$SITENAME" "$SITEURL" > /tmp/$BASEDIRNAME/rss.xml
 
 if [ "/tmp/$BASEDIRNAME" != $TMPDIR ]
