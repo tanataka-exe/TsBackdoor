@@ -1,5 +1,7 @@
 #!/bin/bash
 
+SITE_NAME="T's Backdoor"
+APP_NAME=TsBackdoor
 CMD_FULLPATH=`realpath $0`
 CMD_BASE=`dirname "$CMD_FULLPATH"`
 BASEDIR=$1
@@ -11,7 +13,7 @@ IFS='
 #
 # By default, the configuration file are placed at the same directory of this script!
 # 
-CONFIG=~/.config/TsBackdoor.conf
+CONFIG=~/.config/${APP_NAME}.conf
 
 if [ ! -f "$CONFIG" ]
 then
@@ -19,16 +21,16 @@ then
     # Create a configuration file with a default contents if it doesn't exist
     #
     cat > "$CONFIG" <<EOF
-site_name=T's Backdoor
+site_name=${SITE_NAME}
 static_path=$CMD_BASE/static
-tmp_path=/tmp/TsBackdoor
+tmp_path=/tmp/${APP_NAME}
 server_basedir=/srv/http
 
 # your bucket name goes here
-aws_s3_bucket=$BUCKET
+aws_s3_bucket=${BUCKET}
 
 # your profile name goes here
-aws_profile=$PROFILE
+aws_profile=${PROFILE}
 EOF
 fi
 
@@ -127,6 +129,7 @@ cp -rp $STATICDIR/* $TMPDIR
 SRVBASE=`grep server_basedir "$CONFIG" | cut -d '=' -f 2`
 sudo rm -r $SRVBASE/*
 sudo cp -r $TMPDIR/* $SRVBASE
+sudo sed -i -e 's%'$SITEURL'%http://localhost%g' $SRVBASE/rss.xml
 
 exit 0
 

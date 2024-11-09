@@ -51,8 +51,8 @@
               <h1><strong><?=$sitename?></strong></h1>
             </div>
 
-            <div class="p-2 flex-grow-1">
-              <ul class="breadcrumb" style="margin-bottom: 0">
+            <div class="p-2 flex-grow-1" style="--bs-breadcrumb-divider: '>';">
+              <ul class="breadcrumb" style="margin-bottom: 0; --bs-breadcrumb-divider-color: #CCC;">
                 <?php for ($i = 0; $i < count($data['breadcrumb']) - 1; $i++): ?>
                   <li class="breadcrumb-item">
                     <a href="<?=$data['breadcrumb'][$i]['name']?>"> <?=$data['breadcrumb'][$i]['title']?> </a>
@@ -205,7 +205,7 @@
       </main>
       
       <footer class="row text-center">
-        <p>&copy;2024 田中 喬之 (Tanaka Takayuki)</p>
+        <p>&copy;2024 T.T.</p>
       </footer>
 
     </div>
