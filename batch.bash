@@ -1,5 +1,4 @@
 #!/bin/bash
-
 #    TsBackdoor - a poor static site generator for my own use.
 #    Copyright (C) 2024  Tanaka Takayuki
 #
@@ -16,7 +15,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-SITE_NAME="T's Backdoor"
+#SITE_NAME="T's Backdoor"
 APP_NAME=TsBackdoor
 CMD_FULLPATH=`realpath $0`
 CMD_BASE=`dirname "$CMD_FULLPATH"`
@@ -33,13 +32,25 @@ CONFIG=~/.config/${APP_NAME}.conf
 
 if [ ! -f "$CONFIG" ]
 then
+    if [ ! -v SITE_NAME ];
+    then
+        echo "Please set the environment variable named SITE_NAME."
+        exit 119
+    fi
     if [ ! -v BUCKET ];
     then
         echo "Please set the environment variable named BUCKET."
+        exit 120
     fi
     if [ ! -v PROFILE ]
     then
         echo "Please set the environment variable named PROFILE."
+        exit 121
+    fi
+    if [ ! -v SERVER_BASE ]
+    then
+        echo "Please set the environment variable named SERVER_BASE."
+        exit 122
     fi
 
     #
@@ -49,7 +60,7 @@ then
 site_name=${SITE_NAME}
 static_path=$CMD_BASE/static
 tmp_path=/tmp/${APP_NAME}
-server_basedir=/srv/http
+server_basedir=${SERVER_BASE}
 
 # your bucket name goes here
 aws_s3_bucket=${BUCKET}
@@ -67,7 +78,7 @@ SITENAME=`grep site_name "$CONFIG" | cut -d '=' -f 2`
 if [ "$SITENAME" = "" ]
 then
     echo "set a \"site_name\" in configuration file" >&2
-    exit 124
+    exit 123
 fi
 
 #
@@ -77,7 +88,7 @@ STATICDIR=`grep static_path "$CONFIG" | cut -d '=' -f 2`
 if [ ! -d "$STATICDIR" ]
 then
     echo "\"static\" directory doesn't exist!" >&2
-    exit 125
+    exit 124
 fi
 
 #
@@ -98,7 +109,7 @@ BUCKET=`grep aws_s3_bucket "$CONFIG" | cut -d '=' -f 2`
 if [ ! -v BUCKET ] || [ "$BUCKET" = "" ]
 then
     echo "aws_s3_bucket not exist or not been set in your configuration file!" >&2
-    exit 126
+    exit 125
 fi
 
 #
@@ -108,7 +119,7 @@ SITEURL=`grep site_url "$CONFIG" | cut -d '=' -f 2`
 if [ "$SITEURL" = "" ]
 then
     echo "set a \"site_url\" in configuration file" >&2
-    exit 124
+    exit 126
 fi
 
 for F in `find "$BASEDIRNAME" -type f -not -path "$BASEDIRNAME/.git/*"`
@@ -136,7 +147,7 @@ do
         #
         # Parse the file and write it as a HTML file
         #
-        python $CMD_BASE/parse-file.py "$F" | php $CMD_BASE/make-html.php $SITENAME > "$OUTFILE"
+        python $CMD_BASE/parse-file.py "$F" | php $CMD_BASE/make-html.php "$SITENAME" > "$OUTFILE"
 	if [ "$?" -ne 0 ]
 	then
 	    echo "ERROR: Some error has occured on file $F" >&2
@@ -171,6 +182,5 @@ then
 fi    
 
 BUCKET=$BUCKET PROFILE=$PROFILE $CMD_BASE/sync-s3.bash $TMPDIR
-
 #BUCKET=$BUCKET PROFILE=$PROFILE $CMD_BASE/upload-s3.bash $TMPDIR
 
