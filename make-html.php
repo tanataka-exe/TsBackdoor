@@ -20,9 +20,12 @@
     $sitename = $argv[1];
     $stdin = fgets(STDIN);
     $data = json_decode($stdin, true);
+    //fputs(STDERR, $stdin);
     $markdown = new MarkdownExtra;
     $markdown->hard_wrap = true;
     $isTop = count($data['links']) == 0;
+    $isIndex = $data["name"] == "index.html";
+    $isSidebar = isset($data["side_files"]);
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -92,9 +95,27 @@
         </div>
       </header>
 
-      <main>
+      <main class="<?php if ($isSidebar) echo "d-flex flex-row"; else echo "";?>">
 
-        <?php if (array_key_exists('breadcrumb', $data) && count($data['breadcrumb']) > 0): ?>
+          <?php if ($isSidebar): ?> 
+            <div id="sidebar" class="p-2">
+              <h3><?=$data['links']['up']['title']?></h3>
+              <ul> 
+                <?php foreach ($data["side_files"] as $navFile): ?>
+                  <?php if ($navFile["current"]): ?> 
+                    <!-- current = <?=$navFile["current"] ? "true" : "false"?> -->
+                    <li><strong><?=$navFile["title"]?></strong></li>
+                  <?php else: ?> 
+                    <!-- current = <?=$navFile["current"] ? "true" : "false"?> -->
+                    <li><a href="<?=$navFile["name"]?>"><?=$navFile["title"]?></a></li>
+                  <?php endif; ?>
+                <?php endforeach; ?> 
+              </ul>
+            </div>
+          <?php endif; ?> 
+
+          <article class="<?php if ($isSidebar) echo "p-2"; else echo "";?>">
+          <?php if (array_key_exists('breadcrumb', $data) && count($data['breadcrumb']) > 0): ?>
           <nav id="top-nav" class="row">
             <div class="col text-start">
               <?php if (array_key_exists('prev', $data['links'])): ?> 
@@ -134,7 +155,7 @@
           <?php endif; ?> 
 
           <?php if (array_key_exists('date', $data)): ?> 
-  	    <p class="date"><?=$data['date']?></p>
+            <p class="date"><?=$data['date']?></p>
           <?php endif; ?> 
         </div>
 
@@ -142,7 +163,7 @@
           <?=$markdown->transform($data['contents'])?>
         <?php endif; ?>
         
-        <?php if (array_key_exists('files', $data)): ?>
+        <?php if ($isIndex && array_key_exists('files', $data)): ?>
 
           <?php if ($isTop): ?>
             <h2>分類</h2>
@@ -218,6 +239,7 @@
           </div>
         </nav>
 
+        </article>
       </main>
       
       <footer class="row text-center">

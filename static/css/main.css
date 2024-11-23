@@ -147,6 +147,7 @@ header h1 {
 
 main {
     padding: 1em 2em 1em 2em;
+    gap: 2em;
 }
 
 main h1 {
@@ -248,4 +249,32 @@ dt {
 
 dd {
     padding-left: 2em;
+}
+
+#sidebar {
+    margin: 0;
+    width: 35%;
+}
+
+#sidebar ul {
+    list-style-image: url(/img/nav-list-style.svg);
+    list-style-position: outside;
+    margin-left: -1.5em;
+    line-height: 2em;
+}
+
+@media only screen and (max-width: 500px) {
+    #sidebar {
+        display: none;
+    }
+
+    article {
+        width: 100%;
+    }
+}
+
+@media only screen and (min-width: 501px) {
+    article {
+        width: 100%;
+    }
 }

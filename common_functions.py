@@ -14,6 +14,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import sys
 import os
 import re
 
@@ -30,6 +31,7 @@ def read_file_data(filename, require_contents = True):
     """Open file, read it, and return metadata and markdown contents as a dict
     """
     if os.path.isdir(filename):
+        print(ValueError("WARN: " + filename + " is a directory."), file=sys.stderr)
         #
         # If it is directory, read index file contained in it instead of it.
         #
