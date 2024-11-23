@@ -183,6 +183,18 @@
               <?php foreach ($data['files'] as $i=>$filedata): ?> 
                 <tr>
                   <th scope="row" class="text-end" width="40px"><?=$i+1?></th>
+                  <?php if (isset($filedata['thumb'])): ?> 
+                    <td style="width:70px;">
+                      <?php if (str_ends_with($filedata['name'], ".html")): ?> 
+                        <img src="<?=$filedata['thumb']?>"/>
+                      <?php else: ?> 
+                        <img src="<?=$filedata['name']?>/<?=$filedata['thumb']?>"/>
+                      <?php endif; ?> 
+                    </td>
+                  <?php else: ?>
+                    <td style="width:0;">
+                    </td>
+                  <?php endif; ?>
                   <td>
                     <a href="<?=$filedata['name']?>"><?=$filedata['title']?></a>
                   </td>
