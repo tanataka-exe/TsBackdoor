@@ -31,7 +31,6 @@ def read_file_data(filename, require_contents = True):
     """Open file, read it, and return metadata and markdown contents as a dict
     """
     if os.path.isdir(filename):
-        print(ValueError("WARN: " + filename + " is a directory."), file=sys.stderr)
         #
         # If it is directory, read index file contained in it instead of it.
         #

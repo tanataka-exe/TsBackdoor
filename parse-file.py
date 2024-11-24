@@ -49,7 +49,7 @@ parentdirname = os.path.dirname(filedirname)
 
 if filebasename.startswith("index."):
     is_index = True
-    print("is index = true", file=sys.stderr)
+    #print("is index = true", file=sys.stderr)
 
 # 対象ファイルのメタデータとコンテンツを読み込む
 data = read_file_data(filename)
@@ -88,8 +88,14 @@ def check_file_extension(filename):
             return False
     return True
 
+def check_dir_contains_index(dirpath):
+    return os.path.exists(dirpath + "/" + "index.md")
+
 # ファイルのリストを作成する
 filenames = os.listdir(filedirname)
+# ファイルのリストには、普通のファイルか、または"index.md"を持つディレクトリのみにする。(imgディレクトリなどを表示しないように)
+filenames = list(filter(lambda x: os.path.isfile(filedirname + "/" + x) or check_dir_contains_index(filedirname + "/" + x), filenames))
+#print(filenames, file=sys.stderr)
 index = ''
 for i in range(0, len(filenames)):
     if filenames[i].startswith("index."):
@@ -111,6 +117,10 @@ except NameError:
 parent_filenames = None
 if is_index and parentdirname != '':
     parent_filenames = os.listdir(parentdirname)
+    #print(parent_filenames, file=sys.stderr)
+    # ファイルのリストには、普通のファイルか、または"index.md"を持つディレクトリのみにする。
+    parent_filenames = list(filter(lambda x: os.path.isfile(parentdirname + "/" + x) or check_dir_contains_index(parentdirname + "/" + x), parent_filenames))
+    #print(parent_filenames, file=sys.stderr)
 
     parent_index = ''
     for i in range(0, len(parent_filenames)):
