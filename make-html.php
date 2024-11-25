@@ -55,7 +55,9 @@
          if ($("main").height() < $(window).height()) {
              document.querySelector("#bottom-nav").style.display = "none";
          }
+         $(".contents table").addClass("table table-bordered");
      });
+
     </script>
     <link href="/css/main.css" rel="stylesheet"/>
   </head>
@@ -160,7 +162,9 @@
         </div>
 
         <?php if (array_key_exists('contents', $data)): ?> 
-          <?=$markdown->transform($data['contents'])?>
+          <div class="contents">
+            <?=$markdown->transform($data['contents'])?> 
+          </div>
         <?php endif; ?>
         
         <?php if ($isIndex && array_key_exists('files', $data)): ?>
