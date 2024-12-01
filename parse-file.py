@@ -181,6 +181,7 @@ if is_index:
 
     if parentdirname != "":
         upfilenames = os.listdir(parentdirname)
+        upfilenames = list(filter(lambda x: os.path.isfile(parentdirname + "/" + x) or check_dir_contains_index(parentdirname + "/" + x), upfilenames))
         upfilenames = list(filter(lambda n: not n.startswith("index."), upfilenames))
         upfilenames = list(filter(lambda f: check_file_extension(f), upfilenames))
         upfilenames.sort()
