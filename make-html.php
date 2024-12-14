@@ -1,31 +1,31 @@
 <?php
-    //    TsBackdoor - a poor static site generator for my own use.
-    //    Copyright (C) 2024  Tanaka Takayuki
-    //
-    //    This program is free software: you can redistribute it and/or modify
-    //    it under the terms of the GNU General Public License as published by
-    //    the Free Software Foundation, either version 3 of the License, or
-    //    (at your option) any later version.
-    //
-    //    This program is distributed in the hope that it will be useful,
-    //    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    //    GNU General Public License for more details.
-    //
-    //    You should have received a copy of the GNU General Public License
-    //    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+//    TsBackdoor - a poor static site generator for my own use.
+//    Copyright (C) 2024  Tanaka Takayuki
+//
+//    This program is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-    require 'vendor/autoload.php';
-    use Michelf\MarkdownExtra;
-    $sitename = $argv[1];
-    $stdin = fgets(STDIN);
-    $data = json_decode($stdin, true);
-    //fputs(STDERR, $stdin);
-    $markdown = new MarkdownExtra;
-    $markdown->hard_wrap = true;
-    $isTop = count($data['links']) == 0;
-    $isIndex = $data["name"] == "index.html";
-    $isSidebar = isset($data["side_files"]);
+require 'vendor/autoload.php';
+use Michelf\MarkdownExtra;
+$sitename = $argv[1];
+$stdin = fgets(STDIN);
+$data = json_decode($stdin, true);
+//fputs(STDERR, $stdin);
+$markdown = new MarkdownExtra;
+$markdown->hard_wrap = true;
+$isTop = count($data['links']) == 0;
+$isIndex = $data["name"] == "index.html";
+$isSidebar = isset($data["side_files"]);
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -50,12 +50,12 @@
 
     <script>
      $(document).ready(() => {
-         hljs.highlightAll();
+       hljs.highlightAll();
 
-         if ($("main").height() < $(window).height()) {
-             document.querySelector("#bottom-nav").style.display = "none";
-         }
-         $(".contents table").addClass("table table-bordered");
+       if ($("main").height() < $(window).height()) {
+         document.querySelector("#bottom-nav").style.display = "none";
+       }
+       $(".contents table").addClass("table table-bordered");
      });
 
     </script>
@@ -99,26 +99,137 @@
 
       <main class="<?php if ($isSidebar) echo "d-flex flex-row"; else echo "";?>">
 
-          <?php if ($isSidebar): ?> 
-            <div id="sidebar" class="p-2">
-              <h3><?=$data['links']['up']['title']?></h3>
-              <ul> 
-                <?php foreach ($data["side_files"] as $navFile): ?>
-                  <?php if ($navFile["current"]): ?> 
-                    <!-- current = <?=$navFile["current"] ? "true" : "false"?> -->
-                    <li><strong><?=$navFile["title"]?></strong></li>
-                  <?php else: ?> 
-                    <!-- current = <?=$navFile["current"] ? "true" : "false"?> -->
-                    <li><a href="<?=$navFile["name"]?>"><?=$navFile["title"]?></a></li>
-                  <?php endif; ?>
-                <?php endforeach; ?> 
-              </ul>
-            </div>
-          <?php endif; ?> 
+        <?php if ($isSidebar): ?> 
+          <div id="sidebar" class="p-2">
+            <h3><?=$data['links']['up']['title']?></h3>
+            <ul> 
+              <?php foreach ($data["side_files"] as $navFile): ?>
+                <?php if ($navFile["current"]): ?> 
+                  <!-- current = <?=$navFile["current"] ? "true" : "false"?> -->
+                  <li><strong><?=$navFile["title"]?></strong></li>
+                <?php else: ?> 
+                  <!-- current = <?=$navFile["current"] ? "true" : "false"?> -->
+                  <li><a href="<?=$navFile["name"]?>"><?=$navFile["title"]?></a></li>
+                <?php endif; ?>
+              <?php endforeach; ?> 
+            </ul>
+          </div>
+        <?php endif; ?> 
 
-          <article class="<?php if ($isSidebar) echo "p-2"; else echo "";?>">
+        <article class="<?php if ($isSidebar) echo "p-2"; else echo "";?>">
           <?php if (array_key_exists('breadcrumb', $data) && count($data['breadcrumb']) > 0): ?>
-          <nav id="top-nav" class="row">
+            <nav id="top-nav" class="row">
+              <div class="col text-start">
+                <?php if (array_key_exists('prev', $data['links'])): ?> 
+                  前: <a href="<?=$data['links']['prev']['name']?>">
+                  <?=$data['links']['prev']['title']?> 
+                  </a>
+                <?php endif; ?> 
+              </div>
+
+              <div class="col text-center">
+                <?php if (array_key_exists('up', $data['links'])): ?> 
+                  上: <a href="<?=$data['links']['up']['name']?>">
+                  <?=$data['links']['up']['title']?> 
+                  </a>
+                <?php endif; ?> 
+              </div>
+              
+              <div class="col text-end">
+                <?php if (array_key_exists('next', $data['links'])): ?> 
+                  次: <a href="<?=$data['links']['next']['name']?>">
+                  <?=$data['links']['next']['title']?> 
+                  </a>
+                <?php endif; ?> 
+
+              </div>
+              <hr/>
+            </nav>
+          <?php endif; ?>
+
+          <?php if (array_key_exists('eyecatch', $data)): ?>
+            <img src="<?=$data['eyecatch']?>" style="margin-bottom: 1em;" />
+          <?php endif; ?>
+
+          <div class="article-header"> 
+            <?php if (array_key_exists('title', $data)): ?> 
+              <h1><?=$data['title']?></h1>
+            <?php endif; ?> 
+
+            <?php if (array_key_exists('date', $data)): ?> 
+              <p class="date"><?=$data['date']?></p>
+            <?php endif; ?> 
+          </div>
+
+          <?php if (array_key_exists('contents', $data)): ?> 
+            <div class="contents">
+              <?=$markdown->transform($data['contents'])?> 
+            </div>
+          <?php endif; ?>
+          
+          <?php if ($isIndex && array_key_exists('files', $data)): ?>
+
+            <?php if ($isTop): ?>
+              <h2>分類</h2>
+
+              <ul class="d-flex flex-row flex-wrap btn-group">
+                <?php foreach ($data['files'] as $i=>$filedata): ?> 
+                  <li class="d-flex btn btn-outline-info btn-lg justify-content-around">
+                    <a href="<?=$filedata['name']?>"><?=$filedata['title']?></a>
+                  </li>
+                <?php endforeach; ?>
+              </ul>
+
+            <?php else: ?>
+              
+              <table class="table table-borderless table-hover"> 
+
+                <?php foreach ($data['files'] as $i=>$filedata): ?> 
+                  <tr>
+                    <th scope="row" class="text-end" width="40px"><?=$i+1?></th>
+                    <?php if (isset($filedata['thumb'])): ?> 
+                      <td style="width:70px;">
+                        <?php if (str_ends_with($filedata['name'], ".html")): ?> 
+                          <img src="<?=$filedata['thumb']?>"/>
+                        <?php else: ?> 
+                          <img src="<?=$filedata['name']?>/<?=$filedata['thumb']?>"/>
+                        <?php endif; ?> 
+                      </td>
+                    <?php else: ?>
+                      <td style="width:0;">
+                      </td>
+                    <?php endif; ?>
+                    <td>
+                      <a href="<?=$filedata['name']?>"><?=$filedata['title']?></a>
+                    </td>
+                    <td>
+                      <?php if (array_key_exists('excerpt', $filedata)): ?>
+                        <p><?=$filedata['excerpt']?></p>
+                      <?php endif; ?> 
+                    </td>
+                    <?php if (array_key_exists('display_dates', $data)
+                              && strtolower($data['display_dates']) != 'no'
+                              && array_key_exists('date', $filedata)): ?>
+                      <td class="text-end">
+                        <span class="date"><?=$filedata['date']?></span>
+                      </td>
+                    <?php endif; ?>
+                  </tr>
+                <?php endforeach; ?>
+
+              </table>
+
+            <?php endif; ?>
+          <?php endif; ?>
+
+          <?php if ($isTop): ?>
+            <h2>最近書いたページ</h2>
+            <table id="recent-articles" class="table table-borderless table-hover">
+              <tbody></tbody>
+            </table>
+          <?php endif; ?>
+
+          <nav id="bottom-nav" class="row">
             <div class="col text-start">
               <?php if (array_key_exists('prev', $data['links'])): ?> 
                 前: <a href="<?=$data['links']['prev']['name']?>">
@@ -134,126 +245,15 @@
                 </a>
               <?php endif; ?> 
             </div>
-            
+
             <div class="col text-end">
               <?php if (array_key_exists('next', $data['links'])): ?> 
                 次: <a href="<?=$data['links']['next']['name']?>">
                 <?=$data['links']['next']['title']?> 
                 </a>
               <?php endif; ?> 
-
             </div>
-            <hr/>
           </nav>
-        <?php endif; ?>
-
-        <?php if (array_key_exists('eyecatch', $data)): ?>
-          <img src="<?=$data['eyecatch']?>" style="margin-bottom: 1em;" />
-        <?php endif; ?>
-
-        <div class="article-header"> 
-          <?php if (array_key_exists('title', $data)): ?> 
-            <h1><?=$data['title']?></h1>
-          <?php endif; ?> 
-
-          <?php if (array_key_exists('date', $data)): ?> 
-            <p class="date"><?=$data['date']?></p>
-          <?php endif; ?> 
-        </div>
-
-        <?php if (array_key_exists('contents', $data)): ?> 
-          <div class="contents">
-            <?=$markdown->transform($data['contents'])?> 
-          </div>
-        <?php endif; ?>
-        
-        <?php if ($isIndex && array_key_exists('files', $data)): ?>
-
-          <?php if ($isTop): ?>
-            <h2>分類</h2>
-
-            <ul class="d-flex flex-row flex-wrap btn-group">
-              <?php foreach ($data['files'] as $i=>$filedata): ?> 
-                <li class="d-flex btn btn-outline-info btn-lg justify-content-around">
-                  <a href="<?=$filedata['name']?>"><?=$filedata['title']?></a>
-                </li>
-              <?php endforeach; ?>
-            </ul>
-
-          <?php else: ?>
-            
-            <table class="table table-borderless table-hover"> 
-
-              <?php foreach ($data['files'] as $i=>$filedata): ?> 
-                <tr>
-                  <th scope="row" class="text-end" width="40px"><?=$i+1?></th>
-                  <?php if (isset($filedata['thumb'])): ?> 
-                    <td style="width:70px;">
-                      <?php if (str_ends_with($filedata['name'], ".html")): ?> 
-                        <img src="<?=$filedata['thumb']?>"/>
-                      <?php else: ?> 
-                        <img src="<?=$filedata['name']?>/<?=$filedata['thumb']?>"/>
-                      <?php endif; ?> 
-                    </td>
-                  <?php else: ?>
-                    <td style="width:0;">
-                    </td>
-                  <?php endif; ?>
-                  <td>
-                    <a href="<?=$filedata['name']?>"><?=$filedata['title']?></a>
-                  </td>
-                  <td>
-                    <?php if (array_key_exists('excerpt', $filedata)): ?>
-                      <p><?=$filedata['excerpt']?></p>
-                    <?php endif; ?> 
-                  </td>
-                  <?php if (array_key_exists('display_dates', $data)
-                            && strtolower($data['display_dates']) != 'no'
-                            && array_key_exists('date', $filedata)): ?>
-                    <td class="text-end">
-                      <span class="date"><?=$filedata['date']?></span>
-                    </td>
-                  <?php endif; ?>
-                </tr>
-              <?php endforeach; ?>
-
-            </table>
-
-          <?php endif; ?>
-        <?php endif; ?>
-
-        <?php if ($isTop): ?>
-          <h2>最近書いたページ</h2>
-          <table id="recent-articles" class="table table-borderless table-hover">
-            <tbody></tbody>
-          </table>
-        <?php endif; ?>
-
-        <nav id="bottom-nav" class="row">
-          <div class="col text-start">
-            <?php if (array_key_exists('prev', $data['links'])): ?> 
-              前: <a href="<?=$data['links']['prev']['name']?>">
-              <?=$data['links']['prev']['title']?> 
-              </a>
-            <?php endif; ?> 
-          </div>
-
-          <div class="col text-center">
-            <?php if (array_key_exists('up', $data['links'])): ?> 
-              上: <a href="<?=$data['links']['up']['name']?>">
-              <?=$data['links']['up']['title']?> 
-              </a>
-            <?php endif; ?> 
-          </div>
-
-          <div class="col text-end">
-            <?php if (array_key_exists('next', $data['links'])): ?> 
-              次: <a href="<?=$data['links']['next']['name']?>">
-              <?=$data['links']['next']['title']?> 
-              </a>
-            <?php endif; ?> 
-          </div>
-        </nav>
 
         </article>
       </main>
