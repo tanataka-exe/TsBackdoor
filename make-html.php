@@ -104,9 +104,19 @@ $isSidebar = isset($data["side_files"]);
             <h3><?=$data['links']['up']['title']?></h3>
             <ul> 
               <?php foreach ($data["side_files"] as $navFile): ?>
-                <?php if ($navFile["current"]): ?> 
-                  <!-- current = <?=$navFile["current"] ? "true" : "false"?> -->
-                  <li><strong><?=$navFile["title"]?></strong></li>
+                <?php if ($navFile["current"]): ?>
+                  <?php if (isset($data["files"]) && count($data["files"]) > 0): ?>
+                    <li><strong><?=$navFile["title"]?></strong>
+                      <ul>
+                        <?php foreach ($data["files"] as $child): ?>
+                          <li><a href="<?=$child["name"]?>"><?=$child["title"]?></a></li>
+                        <?php endforeach; ?>
+                      </ul>
+                    </li>
+                  <?php else: ?>
+                    <!-- current = <?=$navFile["current"] ? "true" : "false"?> -->
+                    <li><strong><?=$navFile["title"]?></strong></li>
+                  <?php endif; ?>
                 <?php else: ?> 
                   <!-- current = <?=$navFile["current"] ? "true" : "false"?> -->
                   <li><a href="<?=$navFile["name"]?>"><?=$navFile["title"]?></a></li>

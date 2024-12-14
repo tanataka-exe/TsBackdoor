@@ -259,7 +259,7 @@ dd {
 #sidebar ul {
     list-style-image: url(/img/nav-list-style.svg);
     list-style-position: outside;
-    margin-left: -1.5em;
+    margin-left: -1.0em;
     line-height: 2em;
 }
 
