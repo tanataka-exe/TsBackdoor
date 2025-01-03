@@ -37,22 +37,17 @@ then
         echo "Please set the environment variable named SITE_NAME."
         exit 119
     fi
-    if [ ! -v BUCKET ];
-    then
-        echo "Please set the environment variable named BUCKET."
-        exit 120
-    fi
-    if [ ! -v PROFILE ]
-    then
-        echo "Please set the environment variable named PROFILE."
-        exit 121
-    fi
     if [ ! -v SERVER_BASE ]
     then
         echo "Please set the environment variable named SERVER_BASE."
         exit 122
     fi
-
+    if [ ! -v SITE_URL ]
+    then
+        echo "Please set the environment variable named SITE_URL."
+        exit 123
+    fi
+    
     #
     # Create a configuration file with a default contents if it doesn't exist
     #
@@ -61,13 +56,7 @@ site_name=${SITE_NAME}
 static_path=$CMD_BASE/static
 tmp_path=/tmp/${APP_NAME}
 server_basedir=${SERVER_BASE}
-
-# your bucket name goes here
-aws_s3_bucket=${BUCKET}
-site_url=http://${BUCKET}.s3-website.ap-northeast-1.amazonaws.com
-
-# your profile name goes here
-aws_profile=${PROFILE}
+site_url=${SITE_URL}
 EOF
 fi
 
@@ -101,16 +90,6 @@ then
 fi
 
 cd "$BASEDIRPARENT"
-
-#
-# upload files what it genereted to S3 bucket
-#
-BUCKET=`grep aws_s3_bucket "$CONFIG" | cut -d '=' -f 2`
-if [ ! -v BUCKET ] || [ "$BUCKET" = "" ]
-then
-    echo "aws_s3_bucket not exist or not been set in your configuration file!" >&2
-    exit 125
-fi
 
 #
 # Site URL
@@ -170,17 +149,4 @@ cp -rp $STATICDIR/* $TMPDIR
 SRVBASE=`grep server_basedir "$CONFIG" | cut -d '=' -f 2`
 sudo rm -r $SRVBASE/*
 sudo cp -r $TMPDIR/* $SRVBASE
-sudo sed -i -e 's%'$SITEURL'%http://localhost%g' $SRVBASE/rss.xml
-
-exit 0
-
-PROFILE=`grep aws_profile "$CONFIG" | cut -d '=' -f 2`
-if [ ! -v PROFILE ] || [ "$BUCKET" = "" ]
-then
-    echo "aws_profile not exist or not been set in your configuration file!" >&2
-    exit 127
-fi    
-
-BUCKET=$BUCKET PROFILE=$PROFILE $CMD_BASE/sync-s3.bash $TMPDIR
-#BUCKET=$BUCKET PROFILE=$PROFILE $CMD_BASE/upload-s3.bash $TMPDIR
 
