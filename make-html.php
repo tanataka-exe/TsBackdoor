@@ -101,7 +101,7 @@ $isSidebar = isset($data["side_files"]);
 
         <?php if ($isSidebar): ?> 
           <div id="sidebar" class="p-2">
-            <h3><?=$data['links']['up']['title']?></h3>
+	    <h3><a href="<?=$data["name"]=="index.html"?"../":"./"?>">↑</a> <?=$data['links']['up']['title']?></h3>
             <ul> 
               <?php foreach ($data["side_files"] as $navFile): ?>
                 <?php if ($navFile["current"]): ?>
